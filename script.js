@@ -1,750 +1,126 @@
-/* =========================================
-   STARFIELD
-========================================= */
-
-const starCanvas = document.getElementById("stars");
-const starCtx = starCanvas.getContext("2d");
-
-let stars = [];
-
-function resizeStars() {
-
-    starCanvas.width = window.innerWidth;
-    starCanvas.height = window.innerHeight;
-
-    stars = [];
-
-    for (let i = 0; i < 220; i++) {
-
-        stars.push({
-
-            x: Math.random() * starCanvas.width,
-
-            y: Math.random() * starCanvas.height,
-
-            radius: Math.random() * 1.5,
-
-            speed:
-                Math.random() * .3 + .05,
-
-            opacity:
-                Math.random() * .8 + .2
-
-        });
-
-    }
-
-}
-
-function drawStars() {
-
-    starCtx.clearRect(
-        0,
-        0,
-        starCanvas.width,
-        starCanvas.height
-    );
-
-    stars.forEach(star => {
-
-        star.y += star.speed;
-
-        if (star.y > starCanvas.height) {
-            star.y = 0;
-        }
-
-        starCtx.beginPath();
-
-        starCtx.arc(
-            star.x,
-            star.y,
-            star.radius,
-            0,
-            Math.PI * 2
-        );
-
-        starCtx.fillStyle =
-            `rgba(255,255,255,${star.opacity})`;
-
-        starCtx.fill();
-
-    });
-
-    requestAnimationFrame(drawStars);
-
-}
-
-resizeStars();
-drawStars();
-
-window.addEventListener(
-    "resize",
-    resizeStars
-);
-
-
-/* =========================================
-   HEART CURSOR
-========================================= */
-
-let lastHeart = 0;
-
-document.addEventListener(
-    "mousemove",
-    e => {
-
-        const now = Date.now();
-
-        if (now - lastHeart < 80) return;
-
-        lastHeart = now;
-
-        const heart =
-            document.createElement("div");
-
-        heart.className =
-            "cursor-heart";
-
-        heart.innerHTML =
-            Math.random() > .5 ? "♥" : "♡";
-
-        heart.style.left =
-            `${e.clientX}px`;
-
-        heart.style.top =
-            `${e.clientY}px`;
-
-        document
-            .getElementById("cursor-hearts")
-            .appendChild(heart);
-
-        setTimeout(
-            () => heart.remove(),
-            1000
-        );
-
-    }
-);
-
-
-/* =========================================
-   ROSE PETALS
-========================================= */
-
-function createPetal() {
-
-    const petal =
-        document.createElement("div");
-
-    petal.className = "petal";
-
-    petal.innerHTML =
-        Math.random() > .4 ? "🌹" : "🌸";
-
-    petal.style.left =
-        Math.random() * 100 + "vw";
-
-    petal.style.fontSize =
-        10 + Math.random() * 14 + "px";
-
-    petal.style.animationDuration =
-        6 + Math.random() * 8 + "s";
-
-    document
-        .getElementById("petals")
-        .appendChild(petal);
-
-    setTimeout(
-        () => petal.remove(),
-        15000
-    );
-
-}
-
-setInterval(createPetal, 700);
-
-
-/* =========================================
-   ANNIVERSARY COUNTER
-========================================= */
-
-const anniversary =
-    new Date("2025-08-12T00:00:00");
-
-function updateCounter() {
-
-    const now = new Date();
-
-    const difference =
-        Math.max(
-            0,
-            now - anniversary
-        );
-
-    const totalSeconds =
-        Math.floor(
-            difference / 1000
-        );
-
-    const days =
-        Math.floor(
-            totalSeconds / 86400
-        );
-
-    const hours =
-        Math.floor(
-            totalSeconds / 3600
-        ) % 24;
-
-    const minutes =
-        Math.floor(
-            totalSeconds / 60
-        ) % 60;
-
-    const seconds =
-        totalSeconds % 60;
-
-    document.getElementById("days")
-        .textContent = days;
-
-    document.getElementById("hours")
-        .textContent =
-        String(hours).padStart(2,"0");
-
-    document.getElementById("minutes")
-        .textContent =
-        String(minutes).padStart(2,"0");
-
-    document.getElementById("seconds")
-        .textContent =
-        String(seconds).padStart(2,"0");
-
-}
-
-updateCounter();
-
-setInterval(
-    updateCounter,
-    1000
-);
-
-
-/* =========================================
-   ENVELOPE
-========================================= */
-
-const envelope =
-    document.getElementById("envelope");
-
-envelope.addEventListener(
-    "click",
-    () => {
-
-        envelope.classList.toggle("open");
-
-    }
-);
-
-
-/* =========================================
-   MUSIC PLAYER
-========================================= */
-
-const music =
-    document.getElementById("ourSong");
-
-const musicButton =
-    document.getElementById("musicButton");
-
-const musicIcon =
-    document.getElementById("musicIcon");
-
-const equalizer =
-    document.getElementById("equalizer");
-
-musicButton.addEventListener(
-    "click",
-    async () => {
-
-        if (music.paused) {
-
-            try {
-
-                await music.play();
-
-                musicIcon.textContent = "Ⅱ";
-
-                equalizer.classList.add(
-                    "playing"
-                );
-
-            } catch {
-
-                alert(
-                    "Add your music file as music/our-song.mp3 ❤️"
-                );
-
-            }
-
-        } else {
-
-            music.pause();
-
-            musicIcon.textContent = "▶";
-
-            equalizer.classList.remove(
-                "playing"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================
-   SOULMATE METER
-========================================= */
-
-let meterAnimated = false;
-
-function animateMeter() {
-
-    if (meterAnimated) return;
-
-    meterAnimated = true;
-
-    const circle =
-        document.getElementById(
-            "meterProgress"
-        );
-
-    const number =
-        document.getElementById(
-            "meterNumber"
-        );
-
-    circle.style.strokeDashoffset = "0";
-
-    let value = 0;
-
-    const interval =
-        setInterval(() => {
-
-            value++;
-
-            number.textContent =
-                value;
-
-            if (value >= 100) {
-
-                clearInterval(interval);
-
-            }
-
-        }, 22);
-
-}
-
-
-/* =========================================
-   REASONS CAROUSEL
-========================================= */
-
+const $ = (s) => document.querySelector(s);
+const gate = $('#gate');
+const site = $('#site');
+const dob = $('#dob');
+const error = $('#gate-error');
+const unlock = $('#unlock');
 const reasons = [
-
-    {
-        title: "Your smile",
-        text:
-            "Because somehow your smile can make even my worst days feel okay."
-    },
-
-    {
-        title: "Your heart",
-        text:
-            "You care so deeply, and that's one of the things I love most about you."
-    },
-
-    {
-        title: "Your laugh",
-        text:
-            "I could hear you laugh a thousand times and still smile every single time."
-    },
-
-    {
-        title: "Your craziness",
-        text:
-            "Because life would be ridiculously boring without your cute little chaos."
-    },
-
-    {
-        title: "The way you love",
-        text:
-            "You make me feel wanted, understood and loved even from miles away."
-    },
-
-    {
-        title: "Simply you",
-        text:
-            "I could write a thousand reasons and still never explain why my heart chose you."
-    }
-
+  "The way you can make an ordinary day feel special just by being in it.",
+  "Your laugh, your little moods, and the way you make me smile without even trying.",
+  "Because underneath all your drama is the softest, sweetest heart.",
+  "The way our conversations can go from deep life talks to the dumbest argument ever in 0.2 seconds.",
+  "Because even from far away, you somehow feel close to me.",
+  "Your courage, your dreams, and the person you're growing into.",
+  "Because you're my favourite notification, favourite distraction, and favourite human.",
+  "Because it's you. Not a perfect person — my person. And I'd still choose you."
 ];
-
 let reasonIndex = 0;
+function unlockSite(){
+  if(dob.value !== '2006-06-24'){
+    error.textContent = "EHHHH WRONGGG 😭 Try again, baby. You know my birthday! 💗";
+    dob.classList.remove('shake'); void dob.offsetWidth; dob.classList.add('shake');
+    return;
+  }
+  error.textContent = 'THAT’S MY GIRLLLL 😭❤️☺️';
+  unlock.innerHTML = 'THAT’S MY GIRL 😭❤️ <span>☺</span>';
+  unlock.disabled = true;
+  musicManuallyPaused = false;
+startMusic();
+  setTimeout(() => {
+    gate.classList.add('hidden'); site.classList.remove('hidden');
+    document.body.classList.remove('locked');
+    window.scrollTo(0,0);
+    startPetals();
+    setTimeout(() => makeBurst(window.innerWidth/2, window.innerHeight*.48, 36), 300);
+  }, 650);
+}
+unlock.addEventListener('click', unlockSite);
+dob.addEventListener('keydown', e => { if(e.key === 'Enter') unlockSite(); });
+dob.addEventListener('change', () => { error.textContent=''; });
+document.body.classList.add('locked');
 
-const reasonTitle =
-    document.getElementById("reasonTitle");
+function renderReason(){
+  $('#reason-text').textContent = reasons[reasonIndex];
+  $('#reason-count').textContent = `${String(reasonIndex+1).padStart(2,'0')} / ${String(reasons.length).padStart(2,'0')}`;
+  $('#reason-progress').style.width = `${((reasonIndex+1)/reasons.length)*100}%`;
+}
+$('#next-reason').addEventListener('click', () => {reasonIndex=(reasonIndex+1)%reasons.length;renderReason();});
+$('#prev-reason').addEventListener('click', () => {reasonIndex=(reasonIndex-1+reasons.length)%reasons.length;renderReason();});
 
-const reasonText =
-    document.getElementById("reasonText");
+const audio = $('#our-song');
+const musicToggle = $('#music-toggle');
+let musicManuallyPaused = false;
 
-const reasonDots =
-    document.getElementById("reasonDots");
+function updateMusicButton(playing) {
+  musicToggle.innerHTML = playing
+    ? '♫ <span>playing our song</span>'
+    : '♫ <span>our little song</span>';
 
-reasons.forEach(
-    (_, index) => {
-
-        const dot =
-            document.createElement("div");
-
-        dot.className =
-            "reason-dot";
-
-        if (index === 0) {
-            dot.classList.add("active");
-        }
-
-        reasonDots.appendChild(dot);
-
-    }
-);
-
-function showReason(index) {
-
-    reasonIndex =
-        (index + reasons.length)
-        % reasons.length;
-
-    reasonTitle.textContent =
-        reasons[reasonIndex].title;
-
-    reasonText.textContent =
-        reasons[reasonIndex].text;
-
-    document
-        .querySelectorAll(".reason-dot")
-        .forEach(
-            (dot, i) => {
-
-                dot.classList.toggle(
-                    "active",
-                    i === reasonIndex
-                );
-
-            }
-        );
-
+  musicToggle.setAttribute('aria-pressed', String(playing));
 }
 
-document
-    .getElementById("nextReason")
-    .onclick =
-    () => showReason(reasonIndex + 1);
+async function startMusic() {
+  if (musicManuallyPaused) return;
 
-document
-    .getElementById("prevReason")
-    .onclick =
-    () => showReason(reasonIndex - 1);
-
-
-/* =========================================
-   PROMISE RING
-========================================= */
-
-const ring =
-    document.getElementById(
-        "ringContainer"
-    );
-
-const promise =
-    document.getElementById(
-        "promiseText"
-    );
-
-ring.addEventListener(
-    "click",
-    () => {
-
-        promise.classList.toggle(
-            "visible"
-        );
-
-        ring.querySelector(
-            ".ring"
-        ).style.transform =
-            "scale(1.15) rotateY(360deg)";
-
-        setTimeout(
-            () => {
-
-                ring.querySelector(
-                    ".ring"
-                ).style.transform = "";
-
-            },
-            700
-        );
-
-    }
-);
-
-
-/* =========================================
-   SCROLL REVEALS
-========================================= */
-
-const revealObserver =
-    new IntersectionObserver(
-        entries => {
-
-            entries.forEach(entry => {
-
-                if (
-                    entry.isIntersecting
-                ) {
-
-                    entry.target
-                        .classList
-                        .add("visible");
-
-                    if (
-                        entry.target.classList
-                            .contains("meter-section")
-                    ) {
-
-                        animateMeter();
-
-                    }
-
-                }
-
-            });
-
-        },
-        {
-            threshold: .15
-        }
-    );
-
-document
-    .querySelectorAll(".reveal")
-    .forEach(
-        element =>
-            revealObserver.observe(element)
-    );
-
-
-/* =========================================
-   HERO BUTTON
-========================================= */
-
-document
-    .getElementById("startButton")
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .querySelector(".counter-section")
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
-
-        }
-    );
-
-
-/* =========================================
-   FIREWORKS
-========================================= */
-
-const fireCanvas =
-    document.getElementById(
-        "fireworks"
-    );
-
-const fireCtx =
-    fireCanvas.getContext("2d");
-
-let particles = [];
-
-function resizeFireworks() {
-
-    fireCanvas.width =
-        window.innerWidth;
-
-    fireCanvas.height =
-        window.innerHeight;
-
+  try {
+    audio.volume = 0.6;
+    await audio.play();
+    updateMusicButton(true);
+  } catch (error) {
+    updateMusicButton(false);
+  }
 }
 
-resizeFireworks();
+// Toggle music manually
+musicToggle.addEventListener('click', async () => {
+  if (audio.paused) {
+    musicManuallyPaused = false;
+    await startMusic();
+  } else {
+    musicManuallyPaused = true;
+    audio.pause();
+    updateMusicButton(false);
+  }
+});
 
-window.addEventListener(
-    "resize",
-    resizeFireworks
-);
+audio.addEventListener('play', () => updateMusicButton(true));
+audio.addEventListener('pause', () => updateMusicButton(false));
+audio.addEventListener('error', () => updateMusicButton(false));
 
-function createFirework(
-    x,
-    y
-) {
+$('#love-button').addEventListener('click', () => {
+  $('#final-message').classList.remove('hidden');
+  makeBurst(window.innerWidth/2, window.innerHeight*.62, 90);
+  for(let i=0;i<18;i++) setTimeout(()=>makeBurst(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.75,16),i*90);
+  $('#love-button').textContent='I LOVE YOU MORE, DONKEY 😭❤️';
+});
 
-    for (
-        let i = 0;
-        i < 90;
-        i++
-    ) {
-
-        const angle =
-            Math.random()
-            * Math.PI
-            * 2;
-
-        const speed =
-            Math.random()
-            * 7
-            + 2;
-
-        particles.push({
-
-            x,
-            y,
-
-            vx:
-                Math.cos(angle)
-                * speed,
-
-            vy:
-                Math.sin(angle)
-                * speed,
-
-            life: 100,
-
-            size:
-                Math.random()
-                * 3
-                + 1
-
-        });
-
-    }
-
+function makeHeart(x,y){
+  const el=document.createElement('span'); el.className='cursor-heart';
+  el.textContent=['♥','♡','✦'][Math.floor(Math.random()*3)];
+  el.style.left=x+'px';el.style.top=y+'px';el.style.fontSize=(10+Math.random()*17)+'px';
+  $('#hearts-layer').appendChild(el);setTimeout(()=>el.remove(),1200);
 }
-
-function animateFireworks() {
-
-    fireCtx.clearRect(
-        0,
-        0,
-        fireCanvas.width,
-        fireCanvas.height
-    );
-
-    particles =
-        particles.filter(
-            particle => {
-
-                particle.x +=
-                    particle.vx;
-
-                particle.y +=
-                    particle.vy;
-
-                particle.vy += .05;
-
-                particle.life--;
-
-                fireCtx.globalAlpha =
-                    particle.life / 100;
-
-                fireCtx.beginPath();
-
-                fireCtx.arc(
-                    particle.x,
-                    particle.y,
-                    particle.size,
-                    0,
-                    Math.PI * 2
-                );
-
-                fireCtx.fillStyle =
-                    "#ff5c91";
-
-                fireCtx.fill();
-
-                return particle.life > 0;
-
-            }
-        );
-
-    requestAnimationFrame(
-        animateFireworks
-    );
-
+function makeBurst(x,y,count){
+  for(let i=0;i<count;i++)setTimeout(()=>makeHeart(x+(Math.random()-.5)*240,y+(Math.random()-.5)*150),Math.random()*260);
 }
-
-animateFireworks();
-
-
-/* =========================================
-   FINAL "I LOVE YOU TOO"
-========================================= */
-
-document
-    .getElementById("loveButton")
-    .addEventListener(
-        "click",
-        () => {
-
-            const finalMessage =
-                document.getElementById(
-                    "finalMessage"
-                );
-
-            finalMessage.classList.add(
-                "active"
-            );
-
-            for (
-                let i = 0;
-                i < 15;
-                i++
-            ) {
-
-                setTimeout(
-                    () => {
-
-                        createFirework(
-
-                            Math.random()
-                            * window.innerWidth,
-
-                            Math.random()
-                            * window.innerHeight
-                            * .65
-
-                        );
-
-                    },
-                    i * 180
-                );
-
-            }
-
-            document.body.style
-                .overflow = "hidden";
-
-        }
-    );
+let lastHeart=0;
+document.addEventListener('pointermove',e=>{
+  if(site.classList.contains('hidden'))return;
+  const now=Date.now();if(now-lastHeart>65){makeHeart(e.clientX,e.clientY);lastHeart=now;}
+});
+function startPetals(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  setInterval(()=>{
+    if(site.classList.contains('hidden'))return;
+    const p=document.createElement('span');p.className='petal';p.textContent=Math.random()>.5?'♡':'✿';
+    p.style.left=Math.random()*100+'vw';p.style.fontSize=(10+Math.random()*13)+'px';
+    p.style.setProperty('--drift',(Math.random()*180-90)+'px');
+    p.style.animationDuration=(7+Math.random()*7)+'s';
+    document.body.appendChild(p);setTimeout(()=>p.remove(),15000);
+  },850);
+}
+const canvas=$('#stars'),ctx=canvas.getContext('2d');let stars=[];
+function resizeStars(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);stars=Array.from({length:Math.min(150,Math.floor(innerWidth/7))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4+.2,a:Math.random()*.65+.12,s:Math.random()*.008+.002}));}
+function drawStars(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const s of stars){s.a+=Math.sin(Date.now()*s.s)*.004;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,220,237,${Math.max(.08,Math.min(.8,s.a))})`;ctx.fill();}requestAnimationFrame(drawStars);}
+addEventListener('resize',resizeStars);resizeStars();drawStars();
+renderReason();
